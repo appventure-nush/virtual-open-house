@@ -1,0 +1,3 @@
+Matthew2;Hi there! I'm Matthew, and I'm here to show you around the School Auditorium!
+Matthew5;The auditorium is a place where students gather to attend lectures, watch plays, and participate in many more fun activities.
+Matthew1;Shall I show you around the outside?

@@ -1,0 +1,4 @@
+Min Seo1;This is our school's Applied Technology Lab. In this lab, students can use the advanced equipment here to make their own prototypes for Physics and Engineering projects.
+Min Seo4;Students who go for the Singapore Young Physicist Tournament prep and train for the competition here as well!
+Min Seo8;The lab has a prep room which contains most of the building materials for prototypes.
+Min Seo5;There's a tesla coil, a wind tunnel, an optics room, spectral line demonstration equipment...

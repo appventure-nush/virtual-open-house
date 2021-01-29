@@ -1,0 +1,3 @@
+Min Seo7;Any chance we can split this up?
+Min Seo7;This 3-locations-in-1 edgecase is something I totally didn't account for in my salt pillar code.
+Min Seo8;If not, at least get a fitting picture.

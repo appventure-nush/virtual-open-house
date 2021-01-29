@@ -1,0 +1,7 @@
+Carlyne2;Hello there! Welcome to the NUS High Virtual School Tour! My name is Carlyne. 
+Carlyne1;In this interactive tour, my friends and I will show you around the school and let you experience what NUS High has to offer, both inside and outside of the classroom.
+Carlyne1;Before we begin, here's a quick guide on how to play.
+Carlyne7;You can click anywhere on the screen to go to the next dialogue, or skip to the end of the current one.
+Carlyne5;With the buttons below, you can go back to the menu or move to another location whenever you want!
+Carlyne4;Within each location, there will be short videos that play to show you what life is like here in our school. At the end of it, you can examine the current location further if you wish, or move to somewhere new.
+Carlyne6;Are you ready? Let's go!

@@ -1,0 +1,3 @@
+Min Seo6;Welcome to the Clean Energy Lab!
+Min Seo2;The lab is powered by solar energy, hence its name. Data collected from the solar panels above the lab is shared with solar energy researchers, such as those from the Solar Energy Research Institute of Singapore (SERIS).
+Min Seo8;Did you know? We have 3 types of solar panels in our school: mono-crystalline, poly-crystalline and thin film. The energy captured by the solar panels is injected into the school's power grid, supplying energy to the school!

@@ -1,0 +1,3 @@
+Matthew1;Just like it's Synthetic counterpart, the Analytical Chemistry Lab is used for conducting research.
+Matthew2;There's a whole Nuclear Magnetic Resonance machine here! Isn't that cool?
+Matthew3;On top of that, there's Ultraviolet, Infrared and Mass Spectroscopes and chromatography equipment here as well.	

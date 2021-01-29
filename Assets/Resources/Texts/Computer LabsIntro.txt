@@ -1,0 +1,2 @@
+Carlyne1;Welcome to our school's Computer Labs! Computing Studies lessons, or CS for short, are held here.
+Carlyne3;CS modules are compulsory for Year 1 students and can be chosen as a Major from Year 4.

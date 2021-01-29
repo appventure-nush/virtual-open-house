@@ -1,0 +1,13 @@
+Entry
+Now entering the ?????????????????????CR[$Y!R/Yl&\0 T{{
+Intro
+NULL1:Welcome, Subject 43046721. whoami N0T_1MP0RT4NT
+NULL1:I take it you've seen my puzzles? No matter how long it took, how much it cost, your will remained indomitable. Steadfast. Fascinating.
+NULL1:Can the same be said in the face of insurmountable odds? I wonder...
+NULL1:I know what you're looking for. The same thing every last one of them was looking for. And not a single one of them has found it. Yet.
+NULL1:Before you hunt for it...
+NULL1:Don't bother moving anywhere. There's nothing here.
+NULL1:Once you leave, you have failed. Don't you dare set foot in here again.
+NULL1:I went through the trouble of having the database emptied and your memory erased. Don't bother checking it anymore. Your progress on the surface has been erased
+Outro
+NULL1:Just play along. Maybe you'll be the chosen one. Won't stop me from testing your will either way.
