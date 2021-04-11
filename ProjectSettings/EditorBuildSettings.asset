@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Resources/Scenes/ChapterSelectScene.unity
     guid: 1c5e32d9cdeed6c4fa8c8a76288366fa
+  - enabled: 1
+    path: Assets/Resources/Scenes/InstructionScene.unity
+    guid: d32d995cf693f43b3ad0279b19c0004b
   m_configObjects: {}

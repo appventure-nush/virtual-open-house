@@ -17,7 +17,7 @@ public class Flag3 : MonoBehaviour
     void Start()
     {
         found = false;
-        if (PlayerPrefs.GetString("Chapter").Equals("3"))
+        if (PlayerPrefs.GetString("Chapter").Equals("5"))
         { 
             PlayerPrefs.DeleteAll();
             Destroy(GameObject.Find("Buttons"));

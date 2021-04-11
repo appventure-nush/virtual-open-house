@@ -55,10 +55,16 @@ public class ChapterButtonHandler : MonoBehaviour
             StartCoroutine(LerpAnimations.instance.Scale(text.transform, 1.2f, 500f * Time.deltaTime, 0f));
             switch (name)
             {
+                case ("Chapter0Button"):
+                    desc.text = "Replay the tutorial!"; break;
                 case ("Chapter1Button"):
                     desc.text = "Look around the iconic locations in NUS High!"; break;
                 case ("Chapter2Button"):
                     desc.text = "From high-tech labs to cozy lounges, find out more about what happens behind the scenes."; break;
+                case ("Chapter3Button"):
+                    desc.text = "Sports facilities!"; break; //TODO
+                case ("Chapter4Button"):
+                    desc.text = "Music and Art facilities in our school."; break;
                 default:
                     break;
             }
@@ -95,6 +101,9 @@ public class ChapterButtonHandler : MonoBehaviour
             StopAllCoroutines();
             switch (name)
             {
+                case ("Chapter0Button"):
+                    Transit();
+                    LoadScene("InstructionScene"); break;
                 case ("Chapter1Button"):
                     PlayerPrefs.SetString("Chapter", "1");
                     MoveTo("Concourse"); break;
@@ -102,6 +111,12 @@ public class ChapterButtonHandler : MonoBehaviour
                     PlayerPrefs.SetString("Chapter", "2");
                     MoveTo("Clean Energy Lab"); break;
                 case ("Chapter3Button"):
+                    PlayerPrefs.SetString("Chapter", "3");
+                    MoveTo("Basketball Court"); break;
+                case ("Chapter4Button"):
+                    PlayerPrefs.SetString("Chapter", "4");
+                    MoveTo("Art Room"); break;
+                case ("Chapter5Button"):
                     if (PlayerPrefs.HasKey("IsFailure"))
                     {
                         cover.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3f4ilur3";
@@ -109,7 +124,7 @@ public class ChapterButtonHandler : MonoBehaviour
                     }
                     else
                     {
-                        PlayerPrefs.SetString("Chapter", "3");
+                        PlayerPrefs.SetString("Chapter", "5");
                         cover.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "w3lc0m3_T0_mY_d0m41n";
                         MoveTo("Flag3Room"); 
                     }

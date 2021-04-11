@@ -187,10 +187,7 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationVideo(string location)
     {
-        //if ()
-        if (!PlayerPrefs.GetString("Chapter").Equals("1")) NextText();
-        else
-        {
+        if (PlayerPrefs.GetString("Chapter").Equals("1")) {
             StopAllCoroutines();
             StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
@@ -204,6 +201,7 @@ public class LocationSceneHandler : MonoBehaviour
             currentTextIndex = 0;
             StartCoroutine(PlayVideo("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + ".mp4"));
         }
+        else NextText();
     }
 
     public void LocationOutro(string location)
@@ -252,6 +250,7 @@ public class LocationSceneHandler : MonoBehaviour
 
         texts = new string[0];
         currentTextIndex = 0;
+        if (GameObject.Find("RevisitButton") != null) ((ButtonHandler)GameObject.Find("RevisitButton").GetComponent("ButtonHandler")).StartBlink();
         PlayerPrefs.SetInt(location + "Phase", 4);
     }
 
@@ -287,9 +286,7 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationLandmarkVideo(string landmark)
     {
-        if (PlayerPrefs.GetString("Chapter").Equals("2")) ChangePhase(4);
-        else
-        {
+        if (!PlayerPrefs.GetString("Chapter").Equals("1")) {
             StopAllCoroutines();
             StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
@@ -304,7 +301,7 @@ public class LocationSceneHandler : MonoBehaviour
             currentTextIndex = 0;
 
             StartCoroutine(PlayVideo("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + landmark + ".mp4"));
-        }
+        } else NextText();
     }
 
     IEnumerator ScrollText(float timePerChar, float delay)

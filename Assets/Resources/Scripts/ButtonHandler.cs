@@ -19,6 +19,7 @@ public class ButtonHandler : MonoBehaviour
     TextMeshProUGUI text;
     Vector3 initialTextScale;
     static bool transiting = false;
+    static bool blinking = false;
 
     Transform cover;
     Transform coverTarget;
@@ -70,6 +71,28 @@ public class ButtonHandler : MonoBehaviour
         }
     }
 
+    public void FadeIn() {
+        if (!transiting)
+        {
+            TransformAndImageReset();
+            surface.texture = Resources.Load<Texture>(surfaceTexture + "Selected");
+            text.color = new Color32(0, 0, 0, 255);
+            StartCoroutine(LerpAnimations.instance.Scale(surface.transform, 1.2f, 100f * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Scale(text.transform, 1.2f, 100f * Time.deltaTime, 0f));
+        }
+    }
+
+    public void FadeOut() {
+        if (!transiting)
+        {
+            StopAllCoroutines();
+            surface.texture = Resources.Load<Texture>(surfaceTexture);
+            text.color = new Color32(255, 255, 255, 255);
+            StartCoroutine(LerpAnimations.instance.Scale(surface.transform, 1f, 100f * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Scale(text.transform, 1f, 100f * Time.deltaTime, 0f));
+        }
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if (!transiting)
@@ -89,7 +112,7 @@ public class ButtonHandler : MonoBehaviour
             {
                 case ("LetsGoButton"):
                     Transit();
-                    LoadScene("ChapterSelectScene"); break;
+                    LoadScene("InstructionScene"); break;
                 case ("Pause/PlayButton"):
                     locationSceneHandler.PausePlayVideo(); break;
                 case ("ResetButton"):
@@ -242,6 +265,21 @@ public class ButtonHandler : MonoBehaviour
     public void Click()
     {
         if (!transiting) OnPointerUp(null);
+    }
+
+
+    public void StartBlink()
+    {
+        if (blinking) return;
+        InvokeRepeating("FadeIn",0f,2.0f);
+        InvokeRepeating("FadeOut",1.0f,2.0f);
+    }
+
+    public void StopBlink()
+    {
+        if (!blinking) return;
+        CancelInvoke("FadeIn");
+        CancelInvoke("FadeOut");
     }
 }
 
