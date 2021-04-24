@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Net;
 
 public class LocationSceneHandler : MonoBehaviour
      , IPointerDownHandler
@@ -17,6 +18,8 @@ public class LocationSceneHandler : MonoBehaviour
     IEnumerator scrollTextCoroutine;
     float timePerChar;
     float delay;
+
+    RawImage backing;
 
     RawImage hongMeng;
     string[] hongMengSprites;
@@ -35,6 +38,12 @@ public class LocationSceneHandler : MonoBehaviour
     MoveButtonsHandler moveButtonsHandler;
 
     AudioSource sfx;
+
+    Camera normal_cam;
+    Camera cam360;
+
+    ButtonHandler button360;
+    RawImage button360bg;
 
     // Start is called before the first frame update
     void Awake()
@@ -56,6 +65,21 @@ public class LocationSceneHandler : MonoBehaviour
         moveButtonsHandler = GameObject.Find("MoveButtons" + PlayerPrefs.GetString("Chapter")).GetComponent<MoveButtonsHandler>();
         sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
         sfx.volume = 0.3f;
+
+        backing = GameObject.Find("Backing").GetComponent<RawImage>();
+
+        normal_cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cam360 = GameObject.Find("Camera360").GetComponent<Camera>();
+
+        button360 = GameObject.Find("View360").GetComponent<ButtonHandler>();
+        
+        button360bg = button360.GetComponentInChildren<RawImage>();
+
+        if (!RemoteFileExists("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + "360.mp4"))
+        {
+            button360.enabled = false;
+            button360bg.texture = Resources.Load<Texture>("Sprites/BigButton1Visited");
+        }
 
         backdrop.texture = Resources.Load<Texture>("Sprites/" + location);
         if (PlayerPrefs.HasKey(location + "Phase"))
@@ -185,11 +209,13 @@ public class LocationSceneHandler : MonoBehaviour
         PlayerPrefs.SetInt(location + "Phase", 1);
     }
 
+
     public void LocationVideo(string location)
     {
+        print(location);
         if (PlayerPrefs.GetString("Chapter").Equals("1")) {
             StopAllCoroutines();
-            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
+            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
             StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
@@ -202,6 +228,27 @@ public class LocationSceneHandler : MonoBehaviour
             StartCoroutine(PlayVideo("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + ".mp4"));
         }
         else NextText();
+    }
+
+    public void Location360Video(string location)
+    {
+        if (PlayerPrefs.GetString("Chapter").Equals("1"))
+        {
+            StopAllCoroutines();
+            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
+            StartCoroutine(LerpAnimations.instance.Fade(backing, 0f, 0.2f, 0f));
+            StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
+            StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
+            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
+            nameText.text = "";
+            dialogueText.text = "";
+
+            normal_cam.enabled = false;
+            cam360.enabled = true;
+
+            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("360").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+            StartCoroutine(Play360Video());
+        }
     }
 
     public void LocationOutro(string location)
@@ -339,6 +386,19 @@ public class LocationSceneHandler : MonoBehaviour
         yield return null;
     }
 
+    IEnumerator Play360Video()
+    {
+        videoScreen.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
+        videoPlayer.Prepare();
+        while (!videoPlayer.isPrepared)
+        {
+            yield return new WaitForSeconds(0.0166667f);
+        }
+        videoScreen.color = new Color(1, 1, 1, 1);
+        videoScreen.texture = videoPlayer.texture;
+        videoPlayer.Play();
+        yield return null;
+    }
 
     public void PausePlayVideo()
     {
@@ -358,6 +418,28 @@ public class LocationSceneHandler : MonoBehaviour
     {
         videoPlayer.Stop();
         StartCoroutine(PlayVideo("insert url here"));
+    }
+
+    //Using HEAD request to check if video file exists on site
+    private bool RemoteFileExists(string url)
+    {
+        try
+        {
+            //Creating the HttpWebRequest
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+
+            request.Method = "HEAD";
+            //Getting the Web Response.
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            //Returns TRUE if the Status code == 200
+            response.Close();
+            return (response.StatusCode == HttpStatusCode.OK);
+        }
+        catch
+        {
+            //Any exception will returns false.
+            return false;
+        }
     }
 
 }
