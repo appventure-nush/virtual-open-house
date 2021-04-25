@@ -36,9 +36,12 @@ public class ButtonHandler : MonoBehaviour
 
         StartCoroutine(StillTransiting());
         SetButton();
+        if (SceneManager.GetActiveScene().name != "Menu")
+        {
+            locationSceneHandler = GameObject.Find("LocationSceneHandler").GetComponent<LocationSceneHandler>();
+            moveButtonsHandler = GameObject.Find("MoveButtons" + PlayerPrefs.GetString("Chapter")).GetComponent<MoveButtonsHandler>();
+        }
 
-        locationSceneHandler = GameObject.Find("LocationSceneHandler").GetComponent<LocationSceneHandler>();
-        moveButtonsHandler = GameObject.Find("MoveButtons" + PlayerPrefs.GetString("Chapter")).GetComponent<MoveButtonsHandler>();
     }
 
     // Update is called once per frame
@@ -110,9 +113,19 @@ public class ButtonHandler : MonoBehaviour
             StopAllCoroutines();
             switch (name)
             {
+                //Main Menu
                 case ("LetsGoButton"):
                     Transit();
                     LoadScene("InstructionScene"); break;
+                //For Videos
+
+                //360 Video
+                case ("View360"):
+                    locationSceneHandler.Location360Video(PlayerPrefs.GetString("Location")); break;
+                case ("ExitView360"):
+                    //locationSceneHandler.Location360Video();
+                    break;
+                //Location Video
                 case ("Pause/PlayButton"):
                     locationSceneHandler.PausePlayVideo(); break;
                 case ("ResetButton"):
@@ -120,6 +133,7 @@ public class ButtonHandler : MonoBehaviour
                 case ("ExitVideoButton"):
                     locationSceneHandler.NextText();
                     PlayerPrefs.DeleteKey("ExitVideoStatus"); break;
+                
                 case ("MoveButton"):
                     moveButtonsHandler.Move(); break;
                 case ("ConcourseButton"):
