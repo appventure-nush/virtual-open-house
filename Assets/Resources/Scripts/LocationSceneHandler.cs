@@ -5,6 +5,7 @@ using UnityEngine.Video;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Net;
+using System.IO;
 
 public class LocationSceneHandler : MonoBehaviour
      , IPointerDownHandler
@@ -35,6 +36,9 @@ public class LocationSceneHandler : MonoBehaviour
     AudioSource audioSource;
     RawImage videoScreen;
 
+    VideoPlayer videoPlayer360;
+    RawImage videoScreen360;
+
     MoveButtonsHandler moveButtonsHandler;
 
     AudioSource sfx;
@@ -45,41 +49,53 @@ public class LocationSceneHandler : MonoBehaviour
     ButtonHandler button360;
     RawImage button360bg;
 
+    Material mat360;
+    public bool active360;
+
+    GameObject landmarks;
+
     // Start is called before the first frame update
     void Awake()
     {
         location = PlayerPrefs.GetString("Location");
         Debug.Log(location);
+        active360 = false;
+
         backdrop = GameObject.Find("Backdrop").GetComponent<RawImage>();
         hongMeng = GameObject.Find("HongMeng").GetComponent<RawImage>();
         dialogueBox = GameObject.Find("DialogueBox").GetComponent<RawImage>();
         nameText = GameObject.Find("NameText").GetComponent<TextMeshProUGUI>();
+        
         dialogueText = GameObject.Find("DialogueText").GetComponent<TextMeshProUGUI>();
         timePerChar = 0.03f;
         delay = 1.5f;
         scrollTextCoroutine = ScrollText(timePerChar, delay);
+        
         videoPlayer = GameObject.Find("VideoPhase").GetComponent<VideoPlayer>();
         audioSource = GameObject.Find("VideoPhase").GetComponent<AudioSource>();
         audioSource.volume = 0.3f;
         videoScreen = GameObject.Find("VideoScreen").GetComponent<RawImage>();
+
         moveButtonsHandler = GameObject.Find("MoveButtons" + PlayerPrefs.GetString("Chapter")).GetComponent<MoveButtonsHandler>();
+        
         sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
         sfx.volume = 0.3f;
 
         backing = GameObject.Find("Backing").GetComponent<RawImage>();
-
         normal_cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam360 = GameObject.Find("Camera360").GetComponent<Camera>();
-
-        button360 = GameObject.Find("View360").GetComponent<ButtonHandler>();
-        
+        button360 = GameObject.Find("View360").GetComponent<ButtonHandler>();   
         button360bg = button360.GetComponentInChildren<RawImage>();
 
-        if (!RemoteFileExists("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + "360.mp4"))
+        mat360 = Resources.Load<Material>("Materials/360 Mat");
+
+
+        //Check if 360Video exists onsite
+        /*if (!RemoteFileExists("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + "360vid.mp4"))
         {
             button360.enabled = false;
             button360bg.texture = Resources.Load<Texture>("Sprites/BigButton1Visited");
-        }
+        }*/
 
         backdrop.texture = Resources.Load<Texture>("Sprites/" + location);
         if (PlayerPrefs.HasKey(location + "Phase"))
@@ -92,7 +108,19 @@ public class LocationSceneHandler : MonoBehaviour
             currentPhase = 0;
             ChangePhase(0);
         }
-        
+
+        //Check if 360Picture exists
+        if (Resources.Load<Texture>("Sprites/360Pictures/" + location + "360") != null)
+        {
+            button360.enabled = true;
+            mat360.mainTexture = Resources.Load<Texture>("Sprites/360Pictures/" + location + "360");
+
+        } else
+        {
+            button360.enabled = false;
+            button360bg.texture = Resources.Load<Texture>("Sprites/BigButton1Visited");
+        }
+
     }
 
     // Update is called once per frame
@@ -103,24 +131,29 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (currentPhase != 2 && currentPhase != 4)
+        if (!active360)
         {
-            if (scrolling)
+            if (currentPhase != 2 && currentPhase != 4)
             {
-                StopCoroutine(scrollTextCoroutine);
-                dialogueText.text = texts[currentTextIndex];
-                scrolling = false;
-            }
-            else
-            {
-                StopCoroutine(scrollTextCoroutine);
-                NextText();
+                if (scrolling)
+                {
+                    StopCoroutine(scrollTextCoroutine);
+                    dialogueText.text = texts[currentTextIndex];
+                    scrolling = false;
+                }
+                else
+                {
+                    StopCoroutine(scrollTextCoroutine);
+                    NextText();
+                }
             }
         }
+
     }
 
     void ChangePhase(int phase)
     {
+        print(phase);
         switch (phase)
         {
             case (0):
@@ -221,7 +254,7 @@ public class LocationSceneHandler : MonoBehaviour
             StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
             nameText.text = "";
             dialogueText.text = "";
-            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("VideoPhase").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("VideoPhase").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
             texts = new string[0];
             currentTextIndex = 0;
@@ -230,26 +263,50 @@ public class LocationSceneHandler : MonoBehaviour
         else NextText();
     }
 
-    public void Location360Video(string location)
+    public void LocationView360(string location)
     {
-        if (PlayerPrefs.GetString("Chapter").Equals("1"))
-        {
-            StopAllCoroutines();
-            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
-            StartCoroutine(LerpAnimations.instance.Fade(backing, 0f, 0.2f, 0f));
-            StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
-            StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
-            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
-            nameText.text = "";
-            dialogueText.text = "";
+        active360 = true;
+        StopAllCoroutines();
+        StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
+        StartCoroutine(LerpAnimations.instance.Fade(backing, 0f, 0.2f, 0f));
+        StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
+        StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
 
-            normal_cam.enabled = false;
-            cam360.enabled = true;
 
-            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("360").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
-            StartCoroutine(Play360Video());
-        }
+        nameText.alpha = 0;
+        dialogueText.alpha = 0;
+
+        normal_cam.enabled = false;
+        cam360.enabled = true;
+
     }
+    public void LocationExitView360()
+    {
+        active360 = false;
+
+        StopAllCoroutines();
+        StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
+        StartCoroutine(LerpAnimations.instance.Fade(backing, 1f, 0.2f, 0f));
+
+        if(PlayerPrefs.GetInt(location + "Phase") != 4)
+        {
+            StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 1f, 0.2f, 0f));
+
+            if (PlayerPrefs.GetInt(location + "Phase") != 0)
+            {
+                StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 1f, 0.2f, 0f));
+            }
+
+            nameText.alpha = 1;
+            dialogueText.alpha = 1;
+        }
+
+
+        normal_cam.enabled = true;
+        cam360.enabled = false;
+
+    }
+
 
     public void LocationOutro(string location)
     {
@@ -290,7 +347,9 @@ public class LocationSceneHandler : MonoBehaviour
         StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
         StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Landmarks").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
         StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
-        if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+        
+        //Not sure if this is important, if not just delete
+        //if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
 
         nameText.text = "";
         dialogueText.text = "";
@@ -303,6 +362,9 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationLandmarkIntro(string landmark)
     {
+        active360 = false;
+        nameText.alpha = 1;
+        dialogueText.alpha = 1;
         StopAllCoroutines();
         delay = 0f;
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
@@ -385,20 +447,21 @@ public class LocationSceneHandler : MonoBehaviour
         audioSource.Play();
         yield return null;
     }
-
-    IEnumerator Play360Video()
+/*
+    IEnumerator Play360Video(string url)
     {
-        videoScreen.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
-        videoPlayer.Prepare();
-        while (!videoPlayer.isPrepared)
+        videoScreen360.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
+        videoPlayer360.url = url;
+        videoPlayer360.Prepare();
+        while (!videoPlayer360.isPrepared)
         {
             yield return new WaitForSeconds(0.0166667f);
         }
-        videoScreen.color = new Color(1, 1, 1, 1);
-        videoScreen.texture = videoPlayer.texture;
-        videoPlayer.Play();
+        videoScreen360.color = new Color(1, 1, 1, 1);
+        videoScreen360.texture = videoPlayer360.texture;
+        videoPlayer360.Play();
         yield return null;
-    }
+    }*/
 
     public void PausePlayVideo()
     {
@@ -420,26 +483,6 @@ public class LocationSceneHandler : MonoBehaviour
         StartCoroutine(PlayVideo("insert url here"));
     }
 
-    //Using HEAD request to check if video file exists on site
-    private bool RemoteFileExists(string url)
-    {
-        try
-        {
-            //Creating the HttpWebRequest
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
 
-            request.Method = "HEAD";
-            //Getting the Web Response.
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            //Returns TRUE if the Status code == 200
-            response.Close();
-            return (response.StatusCode == HttpStatusCode.OK);
-        }
-        catch
-        {
-            //Any exception will returns false.
-            return false;
-        }
-    }
 
 }
