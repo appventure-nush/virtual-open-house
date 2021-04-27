@@ -117,14 +117,17 @@ public class ButtonHandler : MonoBehaviour
                 case ("LetsGoButton"):
                     Transit();
                     LoadScene("InstructionScene"); break;
-                //For Videos
+
 
                 //360 Video
                 case ("View360"):
-                    locationSceneHandler.Location360Video(PlayerPrefs.GetString("Location")); break;
-                case ("ExitView360"):
-                    //locationSceneHandler.Location360Video();
+                    if (!locationSceneHandler.active360)
+                        locationSceneHandler.LocationView360(PlayerPrefs.GetString("Location"));
+                    else
+                        locationSceneHandler.LocationExitView360();
+
                     break;
+
                 //Location Video
                 case ("Pause/PlayButton"):
                     locationSceneHandler.PausePlayVideo(); break;
