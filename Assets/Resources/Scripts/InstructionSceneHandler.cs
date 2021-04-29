@@ -75,7 +75,11 @@ public class InstructionSceneHandler : MonoBehaviour
     public void NextText()
     {
         currentTextIndex++;
-        if (currentTextIndex >= texts.Length) StartCoroutine(SceneChange("ChapterSelectScene"));
+        if (currentTextIndex >= texts.Length)
+        {
+            StartCoroutine(SceneChange("ChapterSelectScene"));
+            PlayerPrefs.SetInt("TutorialFinish", 1);
+        }
         else
         {
             scrollTextCoroutine = ScrollText(timePerChar, delay);

@@ -116,9 +116,11 @@ public class ButtonHandler : MonoBehaviour
                 //Main Menu
                 case ("LetsGoButton"):
                     Transit();
-                    LoadScene("InstructionScene"); break;
-
-
+                    if (PlayerPrefs.GetInt("TutorialFinish", 0) == 0)
+                        LoadScene("InstructionScene"); 
+                    else
+                        LoadScene("ChapterSelectScene");
+                    break;
                 //360 Video
                 case ("View360"):
                     if (!locationSceneHandler.active360)
