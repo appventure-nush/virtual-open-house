@@ -32,13 +32,15 @@ public class LandmarksHandler : MonoBehaviour
             GameObject landmarkButton = Instantiate(landmarkPrefab, transform);
             landmarkButton.name = landmarkArray[0] + "Button";
             landmarkButton.GetComponentInChildren<TextMeshProUGUI>().text = landmarkArray[0];
-            landmarkButton.transform.parent = transform;
+            //landmarkButton.transform.parent = transform;
+            landmarkButton.transform.SetParent(transform);
             landmarkButton.transform.localPosition = new Vector3(float.Parse(landmarkArray[1]), float.Parse(landmarkArray[2]));
 
             GameObject landmarkIcon = new GameObject();
             RawImage landmarkIconTexture = landmarkIcon.AddComponent<RawImage>();
             landmarkIconTexture.texture = Resources.Load<Texture>("Sprites/Landmark");
-            landmarkIcon.transform.parent = transform;
+            //landmarkIcon.transform.parent = transform;
+            landmarkIcon.transform.SetParent(transform, false);
             landmarkIcon.transform.localPosition = new Vector3(float.Parse(landmarkArray[1]), float.Parse(landmarkArray[2]) + 200f);
             landmarkIcon.transform.localScale = new Vector3(2f, 2f, 2f);
             landmarkIcon.SetActive(true);

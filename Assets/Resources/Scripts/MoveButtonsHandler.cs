@@ -15,7 +15,7 @@ public class MoveButtonsHandler : MonoBehaviour
         if (!locationSceneHandler.moving)
         {
             StopAllCoroutines();
-            StartCoroutine(LerpAnimations.instance.Move(transform, GameObject.Find("Canvas").transform, 500 * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Move(transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
             locationSceneHandler.moving = true;
         }
         else
