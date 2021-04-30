@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using UnityEngine.Networking;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Net;
@@ -53,6 +54,7 @@ public class LocationSceneHandler : MonoBehaviour
     public bool active360;
 
     GameObject landmarks;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -165,19 +167,20 @@ public class LocationSceneHandler : MonoBehaviour
             case (3):
                 LocationOutro(location); break;
             case (4):
-                LocationWaiting(location); break;
+                LocationWaiting(location, true); break;
             case (5):
                 LocationLandmarkIntro(PlayerPrefs.GetString("Landmark")); break;
             case (6):
                 LocationLandmarkVideo(PlayerPrefs.GetString("Landmark")); break;
             default:
-                LocationWaiting(location);
+                LocationWaiting(location, false);
                 currentPhase = 4; break;
         }
     }
 
     public void NextText()
     {
+        
         currentTextIndex++;
         if (currentTextIndex >= texts.Length)
         {
@@ -186,6 +189,7 @@ public class LocationSceneHandler : MonoBehaviour
         }
         else
         {
+            
             scrollTextCoroutine = ScrollText(timePerChar, delay);
             StartCoroutine(scrollTextCoroutine);
             if (hongMengSprites != null)
@@ -245,13 +249,13 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationVideo(string location)
     {
-        print(location);
-        if (PlayerPrefs.GetString("Chapter").Equals("1")) {
+        //VideoExists(location)
+        if (PlayerPrefs.GetString("Chapter").Equals("1") ) {
             StopAllCoroutines();
-            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
+            
             StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
-            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
             nameText.text = "";
             dialogueText.text = "";
             StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("VideoPhase").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
@@ -312,11 +316,11 @@ public class LocationSceneHandler : MonoBehaviour
     {
         StopAllCoroutines();
         videoPlayer.Stop();
-        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
+        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 1f, 0.2f, 0f));
-        if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+        if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
         TextAsset textData = Resources.Load<TextAsset>("Texts/" + location + "Outro");
         string reader = textData.text;
@@ -338,18 +342,20 @@ public class LocationSceneHandler : MonoBehaviour
         PlayerPrefs.SetInt(location + "Phase", 3);
     }
 
-    public void LocationWaiting(string location)
+    public void LocationWaiting(string location, bool moving)
     {
         StopAllCoroutines();
         videoPlayer.Stop();
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
-        StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Landmarks").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
-        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
+        StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Landmarks").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
+        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
         
-        //Not sure if this is important, if not just delete
-        //if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+        
+        if (GameObject.Find("Buttons") != null && moving == false) 
+            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, 
+                            GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
         nameText.text = "";
         dialogueText.text = "";
@@ -370,7 +376,7 @@ public class LocationSceneHandler : MonoBehaviour
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 1f, 0.2f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 1f, 0.2f, 0f));
-        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Landmarks").transform, Vector3.left * 4400, 400 * Time.deltaTime, 0f));
+        StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Landmarks").transform, Vector3.left * 4400, 600 * Time.deltaTime, 0f));
 
         TextAsset textData = Resources.Load<TextAsset>("Texts/" + landmark);
         string reader = textData.text;
@@ -395,21 +401,23 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationLandmarkVideo(string landmark)
     {
-        if (!PlayerPrefs.GetString("Chapter").Equals("1")) {
+
+        if (!PlayerPrefs.GetString("Chapter").Equals("1") )
+        {
             StopAllCoroutines();
-            StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
+
             StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
             StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 0f, 0.2f, 0f));
-            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 400 * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("Buttons").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
 
             nameText.text = "";
             dialogueText.text = "";
-            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("VideoPhase").transform, GameObject.Find("Canvas").transform, 400 * Time.deltaTime, 0f));
+            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("VideoPhase").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
             texts = new string[0];
             currentTextIndex = 0;
 
-            StartCoroutine(PlayVideo("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + landmark + ".mp4"));
+            StartCoroutine(PlayVideo("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + landmark + ".mp4" ));
         } else NextText();
     }
 
@@ -435,7 +443,12 @@ public class LocationSceneHandler : MonoBehaviour
     IEnumerator PlayVideo(string url)
     {
         videoScreen.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
-        videoPlayer.url = url;
+
+        if (url != "again")
+        {
+            videoPlayer.url = url;
+        }
+ 
         videoPlayer.Prepare();
         while (!videoPlayer.isPrepared)
         {
@@ -480,9 +493,31 @@ public class LocationSceneHandler : MonoBehaviour
     public void ResetVideo()
     {
         videoPlayer.Stop();
-        StartCoroutine(PlayVideo("insert url here"));
+        StartCoroutine(PlayVideo("again"));
     }
 
+    //For some reason this function causes the WebGL build to crash :(
+    private bool VideoExists (string location)
+    {
+
+        try
+        {
+            //Creating the HttpWebRequest
+            HttpWebRequest request = WebRequest.Create("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + ".mp4") as HttpWebRequest;
+            //Setting the Request method HEAD
+            request.Method = "HEAD";
+            //Getting the Web Response.
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            //Returns TRUE if the Status code == 200
+            response.Close();
+            return (response.StatusCode == HttpStatusCode.OK);
+        }
+        catch
+        {
+            //Any exception will returns false.
+            return false;
+        }
+    }
 
 
 }
