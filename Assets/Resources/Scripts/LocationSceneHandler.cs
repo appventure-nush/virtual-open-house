@@ -83,6 +83,8 @@ public class LocationSceneHandler : MonoBehaviour
         sfx = GameObject.Find("SFX").GetComponent<AudioSource>();
         sfx.volume = 0.3f;
 
+
+        //For 360 Viewing
         backing = GameObject.Find("Backing").GetComponent<RawImage>();
         normal_cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam360 = GameObject.Find("Camera360").GetComponent<Camera>();
@@ -91,19 +93,11 @@ public class LocationSceneHandler : MonoBehaviour
 
         mat360 = Resources.Load<Material>("Materials/360 Mat");
 
-
-        //Check if 360Video exists onsite
-        /*if (!RemoteFileExists("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + "360vid.mp4"))
-        {
-            button360.enabled = false;
-            button360bg.texture = Resources.Load<Texture>("Sprites/BigButton1Visited");
-        }*/
-
         backdrop.texture = Resources.Load<Texture>("Sprites/" + location);
         if (PlayerPrefs.HasKey(location + "Phase"))
         {
             currentPhase = PlayerPrefs.GetInt(location + "Phase");
-            ChangePhase(currentPhase);
+            ChangePhase(currentPhase, true);
         }
         else
         {
@@ -153,9 +147,13 @@ public class LocationSceneHandler : MonoBehaviour
 
     }
 
-    void ChangePhase(int phase)
+    /*initialize var checks if game has recently been initialized. 
+     * Need to check this cuz the canvas has this animation to move up upon initialization 
+     * and the buttons suddenly move up too much because of it.
+    */
+    void ChangePhase(int phase, bool initialize = false)
     {
-        print(phase);
+        Debug.Log( phase);
         switch (phase)
         {
             case (0):
@@ -165,26 +163,28 @@ public class LocationSceneHandler : MonoBehaviour
             case (2):
                 LocationVideo(location); break;
             case (3):
-                LocationOutro(location); break;
+                LocationOutro(location, initialize); break;
             case (4):
-                LocationWaiting(location, true); break;
+                LocationWaiting(location, initialize); break;
             case (5):
                 LocationLandmarkIntro(PlayerPrefs.GetString("Landmark")); break;
             case (6):
                 LocationLandmarkVideo(PlayerPrefs.GetString("Landmark")); break;
             default:
-                LocationWaiting(location, false);
+                LocationWaiting(location, initialize);
                 currentPhase = 4; break;
         }
     }
 
     public void NextText()
     {
-        
+        Debug.Log(currentTextIndex);
+        Debug.Log(texts.Length);
         currentTextIndex++;
         if (currentTextIndex >= texts.Length)
         {
             currentPhase++;
+            Debug.Log(currentPhase);
             ChangePhase(currentPhase);
         }
         else
@@ -249,7 +249,6 @@ public class LocationSceneHandler : MonoBehaviour
 
     public void LocationVideo(string location)
     {
-        //VideoExists(location)
         if (PlayerPrefs.GetString("Chapter").Equals("1") ) {
             StopAllCoroutines();
             
@@ -270,7 +269,6 @@ public class LocationSceneHandler : MonoBehaviour
     public void LocationView360(string location)
     {
         active360 = true;
-        StopAllCoroutines();
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 0f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(backing, 0f, 0.2f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 0f, 0.2f, 0f));
@@ -287,8 +285,6 @@ public class LocationSceneHandler : MonoBehaviour
     public void LocationExitView360()
     {
         active360 = false;
-
-        StopAllCoroutines();
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(backing, 1f, 0.2f, 0f));
 
@@ -311,16 +307,24 @@ public class LocationSceneHandler : MonoBehaviour
 
     }
 
-
-    public void LocationOutro(string location)
+    public void Toggle360View()
     {
+        if (!active360)
+            LocationView360(location);
+        else
+            LocationExitView360();
+    }
+
+    public void LocationOutro(string location, bool initialization = false)
+    {
+        print("test");
         StopAllCoroutines();
         videoPlayer.Stop();
         StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(hongMeng, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(backdrop, 1f, 0.4f, 0f));
         StartCoroutine(LerpAnimations.instance.Fade(dialogueBox, 1f, 0.2f, 0f));
-        if (GameObject.Find("Buttons") != null) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
+        if (GameObject.Find("Buttons") != null && !initialization) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
         TextAsset textData = Resources.Load<TextAsset>("Texts/" + location + "Outro");
         string reader = textData.text;
@@ -342,7 +346,7 @@ public class LocationSceneHandler : MonoBehaviour
         PlayerPrefs.SetInt(location + "Phase", 3);
     }
 
-    public void LocationWaiting(string location, bool moving)
+    public void LocationWaiting(string location, bool initialization = false)
     {
         StopAllCoroutines();
         videoPlayer.Stop();
@@ -353,9 +357,7 @@ public class LocationSceneHandler : MonoBehaviour
         StartCoroutine(LerpAnimations.instance.Shift(GameObject.Find("VideoPhase").transform, Vector3.down * 2200, 600 * Time.deltaTime, 0f));
         
         
-        if (GameObject.Find("Buttons") != null && moving == false) 
-            StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, 
-                            GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
+        if (GameObject.Find("Buttons") != null && !initialization) StartCoroutine(LerpAnimations.instance.Move(GameObject.Find("Buttons").transform, GameObject.Find("Canvas").transform, 600 * Time.deltaTime, 0f));
 
         nameText.text = "";
         dialogueText.text = "";
@@ -402,7 +404,7 @@ public class LocationSceneHandler : MonoBehaviour
     public void LocationLandmarkVideo(string landmark)
     {
 
-        if (!PlayerPrefs.GetString("Chapter").Equals("1") )
+        if (PlayerPrefs.GetString("Chapter").Equals("1") )
         {
             StopAllCoroutines();
 
@@ -444,7 +446,7 @@ public class LocationSceneHandler : MonoBehaviour
     {
         videoScreen.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
 
-        if (url != "again")
+        if (url != "reset")
         {
             videoPlayer.url = url;
         }
@@ -460,21 +462,7 @@ public class LocationSceneHandler : MonoBehaviour
         audioSource.Play();
         yield return null;
     }
-/*
-    IEnumerator Play360Video(string url)
-    {
-        videoScreen360.texture = Resources.Load<Texture>("Sprites/CheckYourInternet");
-        videoPlayer360.url = url;
-        videoPlayer360.Prepare();
-        while (!videoPlayer360.isPrepared)
-        {
-            yield return new WaitForSeconds(0.0166667f);
-        }
-        videoScreen360.color = new Color(1, 1, 1, 1);
-        videoScreen360.texture = videoPlayer360.texture;
-        videoPlayer360.Play();
-        yield return null;
-    }*/
+
 
     public void PausePlayVideo()
     {
@@ -493,31 +481,7 @@ public class LocationSceneHandler : MonoBehaviour
     public void ResetVideo()
     {
         videoPlayer.Stop();
-        StartCoroutine(PlayVideo("again"));
+        StartCoroutine(PlayVideo("reset"));
     }
-
-    //For some reason this function causes the WebGL build to crash :(
-    private bool VideoExists (string location)
-    {
-
-        try
-        {
-            //Creating the HttpWebRequest
-            HttpWebRequest request = WebRequest.Create("https://nush-open-house.sgp1.cdn.digitaloceanspaces.com/" + location + ".mp4") as HttpWebRequest;
-            //Setting the Request method HEAD
-            request.Method = "HEAD";
-            //Getting the Web Response.
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            //Returns TRUE if the Status code == 200
-            response.Close();
-            return (response.StatusCode == HttpStatusCode.OK);
-        }
-        catch
-        {
-            //Any exception will returns false.
-            return false;
-        }
-    }
-
 
 }

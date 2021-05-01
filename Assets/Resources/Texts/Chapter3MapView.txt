@@ -1,0 +1,5 @@
+Basketball Court;-1256;-1321
+Indoor Sports Hall;1054;-490
+T&F, Tennis Courts;438;-1069
+Gym;52;-989
+Netball Court;-1183;1196
