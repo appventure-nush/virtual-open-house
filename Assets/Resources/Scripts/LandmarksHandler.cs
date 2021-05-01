@@ -23,6 +23,7 @@ public class LandmarksHandler : MonoBehaviour
 
     void LoadLandmarks()
     {
+
         TextAsset textData = Resources.Load<TextAsset>("Texts/" + PlayerPrefs.GetString("Location") + "Landmarks");
         string reader = textData.text;
         string[] landmarks = reader.Split('\n');

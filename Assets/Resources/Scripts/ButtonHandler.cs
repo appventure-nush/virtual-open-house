@@ -26,7 +26,8 @@ public class ButtonHandler : MonoBehaviour
 
     LocationSceneHandler locationSceneHandler;
     MoveButtonsHandler moveButtonsHandler;
-    
+    MapViewHandler mapViewHandler;
+
     // Start is called before the first frame update
           
     void Start()
@@ -40,6 +41,7 @@ public class ButtonHandler : MonoBehaviour
         {
             locationSceneHandler = GameObject.Find("LocationSceneHandler").GetComponent<LocationSceneHandler>();
             moveButtonsHandler = GameObject.Find("MoveButtons" + PlayerPrefs.GetString("Chapter")).GetComponent<MoveButtonsHandler>();
+            mapViewHandler = GameObject.Find("Map").GetComponent<MapViewHandler>();
         }
 
     }
@@ -111,6 +113,7 @@ public class ButtonHandler : MonoBehaviour
         if (!transiting)
         {
             StopAllCoroutines();
+
             switch (name)
             {
                 //Main Menu
@@ -121,13 +124,11 @@ public class ButtonHandler : MonoBehaviour
                     else
                         LoadScene("ChapterSelectScene");
                     break;
+
                 //360 Video
                 case ("View360"):
-                    if (!locationSceneHandler.active360)
-                        locationSceneHandler.LocationView360(PlayerPrefs.GetString("Location"));
-                    else
-                        locationSceneHandler.LocationExitView360();
-
+                    locationSceneHandler.Toggle360View();
+                    mapViewHandler.ViewMapOff(); 
                     break;
 
                 //Location Video
@@ -140,7 +141,12 @@ public class ButtonHandler : MonoBehaviour
                     PlayerPrefs.DeleteKey("ExitVideoStatus"); break;
                 
                 case ("MoveButton"):
-                    moveButtonsHandler.Move(); break;
+                    if (!PlayerPrefs.GetString("Chapter").Equals("1"))
+                        mapViewHandler.ToggleMapView();
+                    else
+                        moveButtonsHandler.Move();
+                    break;
+
                 case ("ConcourseButton"):
                     MoveTo("Concourse"); break;
                 case ("AuditoriumButton"):
@@ -161,7 +167,7 @@ public class ButtonHandler : MonoBehaviour
                     MoveTo("Level 3 Labs"); break;
                 case ("Computer LabsButton"):
                     MoveTo("Computer Labs"); break;
-                case ("Synthetic Chemistry LabButton"):
+                case ("Synthetic Chem LabButton"):
                     MoveTo("Synthetic Chemistry Lab"); break;
                 case ("Life Sciences LabButton"):
                     MoveTo("Life Sciences Lab"); break;
@@ -179,7 +185,7 @@ public class ButtonHandler : MonoBehaviour
                     MoveTo("Hall"); break;
                 case ("TheatretteButton"):
                     MoveTo("Theatrette"); break;
-                case ("LoungeButton"):
+                case ("Student's LoungeButton"):
                     MoveTo("Lounge"); break;
                 case ("Seminar RoomsButton"):
                     MoveTo("Seminar Rooms"); break;
@@ -191,7 +197,7 @@ public class ButtonHandler : MonoBehaviour
                     MoveTo("T&F, Tennis Courts"); break;
                 case ("GymButton"):
                     MoveTo("Gym"); break;
-                case ("ISHButton"):
+                case ("Indoor Sports HallButton"):
                     MoveTo("ISH"); break;
                 case ("Music RoomButton"):
                     MoveTo("Music Room"); break;

@@ -1,0 +1,12 @@
+Math ICT Lab;-167;1486
+Seminar Rooms;419;1623
+Synthetic Chem Lab;-828;1518
+Clean Energy Lab;72;1222
+Hall;-858;-1089
+Theatrette;-830;-1493
+Cookery Lab;-19;-1396
+Student's Lounge;-295;-1527
+Ecopond;-1256;-1321
+Applied Tech Lab;-471;1354
+Life Sciences Lab;-1189;1408
+Computer Labs;-884;899
